@@ -20,6 +20,11 @@ namespace CadastroUsuarios.Controllers
                 usuarios = new List<Usuario>();
         }
 
+        /// <summary>
+        /// Método para CRIAR usuário
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [HttpPost()]
         public ActionResult CriarUsuario(UsuarioInput input)
         {
@@ -54,6 +59,10 @@ namespace CadastroUsuarios.Controllers
             return Ok(usuario);
         }
 
+        /// <summary>
+        /// método para retornar TODOS os usuários
+        /// </summary>
+        /// <returns></returns>
         [HttpGet()]
         public ActionResult GetUsuarios()
         {
@@ -69,11 +78,96 @@ namespace CadastroUsuarios.Controllers
             var usuario = usuarios.FirstOrDefault(usuario => usuario.Id == id);
 
             if (usuario == null)
-                return NotFound();
+                return NoContent();
 
             usuarios.Remove(usuario);
 
             return Ok();
+        }
+
+        /// <summary>
+        /// método para adicionar contato do usuario
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="contato"></param>
+        /// <returns></returns>
+        [HttpPost("{id}/contato")]
+        public ActionResult CadastrarContatoUsuario(Guid id, [FromBody]ContatoInput contato)
+        {
+            var usuario = usuarios.FirstOrDefault(usuario => usuario.Id == id);
+
+            if (usuario == null)
+                return NoContent();
+
+            usuario.AdicionarContato(new Contato(contato.Nome, contato.Uri));
+
+            return Ok(usuario);
+        }
+
+        /// <summary>
+        /// método para deletar contato do usuario
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="idContato"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}/contato/{idContato}")]
+        public ActionResult DeletarContatoUsuario(Guid id, Guid idContato)
+        {
+            var usuario = usuarios.FirstOrDefault(usuario => usuario.Id == id);
+
+            if (usuario == null)
+                return NoContent();
+
+            var contato = usuario.Contatos.FirstOrDefault(contato => contato.Id == idContato);
+
+            if (contato == null)
+                return NoContent();
+
+            usuario.RemoverContato(contato);
+
+            return Ok(usuario);
+        }
+        /// <summary>
+        /// método para criar endereço para o usuario
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="contato"></param>
+        /// <returns></returns>
+        [HttpPost("{id}/endereco")]
+        public ActionResult CadastrarEnderecoUsuario(Guid id, [FromBody] EnderecoInput contato)
+        {
+            var usuario = usuarios.FirstOrDefault(usuario => usuario.Id == id);
+
+            if (usuario == null)
+                return NotFound();
+
+            usuario.AdicionarEndereco(new Endereco(contato.Cep, contato.Logradouro));
+
+            return Ok(usuario);
+        }
+
+        /// <summary>
+        /// Método para deletar endereço do usuario
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="idEndereco"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}/endereco/{idEndereco}")]
+        public ActionResult DeletarEnderecoUsuario(Guid id, Guid idEndereco)
+        {
+            var usuario = usuarios.FirstOrDefault(usuario => usuario.Id == id);
+
+            if (usuario == null)
+                return NoContent();
+
+            var endereco = usuario.Enderecos.FirstOrDefault(endereco => endereco.Id == idEndereco);
+
+            if (endereco == null)
+                return NoContent();
+
+            usuario.RemoverEndereco(endereco);
+
+            return Ok(usuario);
         }
     }
 }

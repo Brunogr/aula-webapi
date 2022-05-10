@@ -12,6 +12,8 @@ namespace CadastroUsuarios.Dominio.Entidades
             this.senha = senha;
             Login = login;
             Nome = nome;
+            Contatos = new List<Contato>();
+            Enderecos = new List<Endereco>();
         }
 
         public string Login { get; private set; }
